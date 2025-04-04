@@ -94,6 +94,9 @@ function resetGame() {
     // Инициализация позиции и размера спикера
     // Уменьшаем размер спикера на мобильных устройствах
     if (window.innerWidth <= 480) {
+        speakerWidth = 60;
+        speakerHeight = 120;
+    } else if (window.innerWidth <= 850) {
         speakerWidth = 80;
         speakerHeight = 160;
     } else {
@@ -392,8 +395,12 @@ function initMobileControls() {
 // u041eu0431u0440u0430u0431u043eu0442u043au0430 u0438u0437u043cu0435u043du0435u043du0438u044f u0440u0430u0437u043cu0435u0440u0430 u043eu043au043du0430
 function handleResize() {
     resizeCanvas();
+    
     // u041fu0435u0440u0435u0441u0447u0438u0442u044bu0432u0430u0435u043c u0440u0430u0437u043cu0435u0440 u0441u043fu0438u043au0435u0440u0430 u043fu0440u0438 u0438u0437u043cu0435u043du0435u043du0438u0438 u0440u0430u0437u043cu0435u0440u0430 u044du043au0440u0430u043du0430
     if (window.innerWidth <= 480) {
+        speakerWidth = 60;
+        speakerHeight = 120;
+    } else if (window.innerWidth <= 850) {
         speakerWidth = 80;
         speakerHeight = 160;
     } else {
@@ -408,6 +415,12 @@ function handleResize() {
     if (speakerY + speakerHeight > gameHeight) {
         speakerY = gameHeight - speakerHeight;
     }
+    if (speakerX < 0) {
+        speakerX = 0;
+    }
+    if (speakerY < 0) {
+        speakerY = 0;
+    }
     
     // u041fu0440u043eu0432u0435u0440u044fu0435u043c, u0447u0442u043eu0431u044b u043au0430u043cu0435u0440u0430 u043du0435 u0432u044bu0445u043eu0434u0438u043bu0430 u0437u0430 u043fu0440u0435u0434u0435u043bu044b u044du043au0440u0430u043du0430
     if (cameraX + FRAME_WIDTH > gameWidth) {
@@ -415,6 +428,12 @@ function handleResize() {
     }
     if (cameraY + FRAME_HEIGHT > gameHeight) {
         cameraY = gameHeight - FRAME_HEIGHT;
+    }
+    if (cameraX < 0) {
+        cameraX = 0;
+    }
+    if (cameraY < 0) {
+        cameraY = 0;
     }
 }
 
@@ -427,12 +446,15 @@ function resizeCanvas() {
     
     // u0423u0447u0438u0442u044bu0432u0430u0435u043c u043cu0435u0441u0442u043e u0434u043bu044f u043au043du043eu043fu043eu043a u0443u043fu0440u0430u0432u043bu0435u043du0438u044f
     let canvasHeight = containerHeight;
+    
     if (window.innerWidth <= 850) {
         // u041du0430 u043cu043eu0431u0438u043bu044cu043du044bu0445 u0443u0441u0442u0440u043eu0439u0441u0442u0432u0430u0445 u043eu0441u0442u0430u0432u043bu044fu0435u043c u043cu0435u0441u0442u043e u0434u043bu044f u043au043du043eu043fu043eu043a
-        if (window.innerHeight <= 500) { // u041bu0430u043du0434u0448u0430u0444u0442u043du0430u044f u043eu0440u0438u0435u043du0442u0430u0446u0438u044f
-            canvasHeight = containerHeight - 80;
+        if (window.innerWidth <= 480) {
+            canvasHeight = containerHeight - 140; // u0414u043bu044f u043cu0430u043bu0435u043du044cu043au0438u0445 u044du043au0440u0430u043du043eu0432
+        } else if (window.innerHeight <= 500) { // u041bu0430u043du0434u0448u0430u0444u0442u043du0430u044f u043eu0440u0438u0435u043du0442u0430u0446u0438u044f
+            canvasHeight = containerHeight - 100;
         } else { // u041fu043eu0440u0442u0440u0435u0442u043du0430u044f u043eu0440u0438u0435u043du0442u0430u0446u0438u044f
-            canvasHeight = containerHeight - 120;
+            canvasHeight = containerHeight - 150;
         }
     }
     
