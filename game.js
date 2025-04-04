@@ -64,6 +64,10 @@ window.onload = function() {
     canvas.width = gameWidth;
     canvas.height = gameHeight;
     
+    // Handle canvas scaling for mobile devices
+    handleCanvasScaling();
+    window.addEventListener('resize', handleCanvasScaling);
+    
     // Load assets
     backgroundImage.src = 'fon.png';
     speakerImage.src = 'Speaker.png';
@@ -81,7 +85,45 @@ window.onload = function() {
     
     // Initialize mobile controls
     initMobileControls();
+    
+    // Prevent default touch behavior to avoid scrolling
+    document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+    }, { passive: false });
 };
+
+// Handle canvas scaling for different screen sizes
+function handleCanvasScaling() {
+    const container = document.getElementById('game-container');
+    const isMobile = window.innerWidth <= 850;
+    
+    if (isMobile) {
+        // On mobile, scale the canvas to fill the screen while maintaining aspect ratio
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        // Calculate scale factor
+        let scale = Math.min(
+            containerWidth / gameWidth,
+            containerHeight / gameHeight
+        );
+        
+        // Apply scale transform to canvas
+        canvas.style.transformOrigin = 'top left';
+        canvas.style.transform = `scale(${scale})`;
+        
+        // Center the canvas
+        const scaledWidth = gameWidth * scale;
+        const scaledHeight = gameHeight * scale;
+        canvas.style.left = `${(containerWidth - scaledWidth) / 2}px`;
+        canvas.style.top = `${(containerHeight - scaledHeight) / 2}px`;
+    } else {
+        // On desktop, use default size
+        canvas.style.transform = 'none';
+        canvas.style.left = '0';
+        canvas.style.top = '0';
+    }
+}
 
 // Reset game state
 function resetGame() {
@@ -320,11 +362,12 @@ function initMobileControls() {
     const leftButton = document.getElementById('left-button');
     const rightButton = document.getElementById('right-button');
     
-    // Touch event handlers for mobile buttons
+    // Touch event handlers for mobile buttons with improved responsiveness
     function handleTouchStart(direction) {
         return function(e) {
             e.preventDefault();
             keys[direction] = true;
+            this.classList.add('active'); // Visual feedback
         };
     }
     
@@ -332,28 +375,29 @@ function initMobileControls() {
         return function(e) {
             e.preventDefault();
             keys[direction] = false;
+            this.classList.remove('active'); // Remove visual feedback
         };
     }
     
     // Add touch events for up button
-    upButton.addEventListener('touchstart', handleTouchStart('ArrowUp'));
-    upButton.addEventListener('touchend', handleTouchEnd('ArrowUp'));
-    upButton.addEventListener('touchcancel', handleTouchEnd('ArrowUp'));
+    upButton.addEventListener('touchstart', handleTouchStart('ArrowUp'), { passive: false });
+    upButton.addEventListener('touchend', handleTouchEnd('ArrowUp'), { passive: false });
+    upButton.addEventListener('touchcancel', handleTouchEnd('ArrowUp'), { passive: false });
     
     // Add touch events for down button
-    downButton.addEventListener('touchstart', handleTouchStart('ArrowDown'));
-    downButton.addEventListener('touchend', handleTouchEnd('ArrowDown'));
-    downButton.addEventListener('touchcancel', handleTouchEnd('ArrowDown'));
+    downButton.addEventListener('touchstart', handleTouchStart('ArrowDown'), { passive: false });
+    downButton.addEventListener('touchend', handleTouchEnd('ArrowDown'), { passive: false });
+    downButton.addEventListener('touchcancel', handleTouchEnd('ArrowDown'), { passive: false });
     
     // Add touch events for left button
-    leftButton.addEventListener('touchstart', handleTouchStart('ArrowLeft'));
-    leftButton.addEventListener('touchend', handleTouchEnd('ArrowLeft'));
-    leftButton.addEventListener('touchcancel', handleTouchEnd('ArrowLeft'));
+    leftButton.addEventListener('touchstart', handleTouchStart('ArrowLeft'), { passive: false });
+    leftButton.addEventListener('touchend', handleTouchEnd('ArrowLeft'), { passive: false });
+    leftButton.addEventListener('touchcancel', handleTouchEnd('ArrowLeft'), { passive: false });
     
     // Add touch events for right button
-    rightButton.addEventListener('touchstart', handleTouchStart('ArrowRight'));
-    rightButton.addEventListener('touchend', handleTouchEnd('ArrowRight'));
-    rightButton.addEventListener('touchcancel', handleTouchEnd('ArrowRight'));
+    rightButton.addEventListener('touchstart', handleTouchStart('ArrowRight'), { passive: false });
+    rightButton.addEventListener('touchend', handleTouchEnd('ArrowRight'), { passive: false });
+    rightButton.addEventListener('touchcancel', handleTouchEnd('ArrowRight'), { passive: false });
     
     // Also add mouse events for testing on desktop
     upButton.addEventListener('mousedown', handleTouchStart('ArrowUp'));
@@ -374,8 +418,75 @@ function initMobileControls() {
     
     // Prevent default behavior for all buttons to avoid unwanted scrolling
     document.querySelectorAll('.control-button').forEach(button => {
-        button.addEventListener('touchstart', e => e.preventDefault());
-        button.addEventListener('touchmove', e => e.preventDefault());
-        button.addEventListener('touchend', e => e.preventDefault());
+        button.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+        button.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+        button.addEventListener('touchend', e => e.preventDefault(), { passive: false });
     });
+    
+    // Add swipe controls as an alternative to buttons
+    addSwipeControls();
+}
+
+// Add swipe controls for more intuitive mobile gameplay
+function addSwipeControls() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    
+    const gameContainer = document.getElementById('game-container');
+    
+    gameContainer.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+    
+    gameContainer.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        
+        // Minimum swipe distance to trigger movement
+        const minSwipeDistance = 30;
+        
+        // Reset all directions
+        keys.ArrowUp = false;
+        keys.ArrowDown = false;
+        keys.ArrowLeft = false;
+        keys.ArrowRight = false;
+        
+        // Determine swipe direction
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // Horizontal swipe
+            if (Math.abs(deltaX) > minSwipeDistance) {
+                if (deltaX > 0) {
+                    // Right swipe
+                    keys.ArrowRight = true;
+                    setTimeout(() => { keys.ArrowRight = false; }, 300);
+                } else {
+                    // Left swipe
+                    keys.ArrowLeft = true;
+                    setTimeout(() => { keys.ArrowLeft = false; }, 300);
+                }
+            }
+        } else {
+            // Vertical swipe
+            if (Math.abs(deltaY) > minSwipeDistance) {
+                if (deltaY > 0) {
+                    // Down swipe
+                    keys.ArrowDown = true;
+                    setTimeout(() => { keys.ArrowDown = false; }, 300);
+                } else {
+                    // Up swipe
+                    keys.ArrowUp = true;
+                    setTimeout(() => { keys.ArrowUp = false; }, 300);
+                }
+            }
+        }
+    }
 }
