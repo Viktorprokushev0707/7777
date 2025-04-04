@@ -100,11 +100,56 @@ body {
     max-width: 300px;
 }
 
+/* Mobile controls */
+#mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none; /* Hidden by default, shown on mobile */
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+}
+
+.control-row {
+    display: flex;
+    margin: 5px 0;
+}
+
+.control-button {
+    width: 60px;
+    height: 60px;
+    margin: 0 5px;
+    font-size: 24px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.control-button:active {
+    background-color: rgba(200, 200, 200, 0.9);
+}
+
 /* Responsive design for smaller screens */
 @media (max-width: 850px) {
     #game-container {
         width: 95vw;
         height: calc(95vw * 0.75); /* Maintain aspect ratio */
+    }
+    
+    #mobile-controls {
+        display: flex; /* Show mobile controls on smaller screens */
+    }
+    
+    #instructions {
+        bottom: 150px; /* Move instructions above mobile controls */
     }
 }
 
@@ -112,5 +157,18 @@ body {
     #game-container {
         height: 90vh;
         width: calc(90vh * 1.33); /* Maintain aspect ratio */
+    }
+    
+    .control-button {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}
+
+/* Prevent zooming on mobile when double-tapping buttons */
+@media (max-width: 850px) {
+    html {
+        touch-action: manipulation;
     }
 }

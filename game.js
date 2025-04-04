@@ -78,6 +78,9 @@ window.onload = function() {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     document.getElementById('restart-button').addEventListener('click', resetGame);
+    
+    // Initialize mobile controls
+    initMobileControls();
 };
 
 // Reset game state
@@ -307,4 +310,72 @@ function endGame() {
     finalScoreElement.textContent = 'Your score: ' + Math.floor(score);
     highScoreElement.textContent = 'High score: ' + Math.floor(highScore);
     gameOverElement.style.display = 'flex';
+}
+
+// Mobile controls
+function initMobileControls() {
+    // Get mobile control buttons
+    const upButton = document.getElementById('up-button');
+    const downButton = document.getElementById('down-button');
+    const leftButton = document.getElementById('left-button');
+    const rightButton = document.getElementById('right-button');
+    
+    // Touch event handlers for mobile buttons
+    function handleTouchStart(direction) {
+        return function(e) {
+            e.preventDefault();
+            keys[direction] = true;
+        };
+    }
+    
+    function handleTouchEnd(direction) {
+        return function(e) {
+            e.preventDefault();
+            keys[direction] = false;
+        };
+    }
+    
+    // Add touch events for up button
+    upButton.addEventListener('touchstart', handleTouchStart('ArrowUp'));
+    upButton.addEventListener('touchend', handleTouchEnd('ArrowUp'));
+    upButton.addEventListener('touchcancel', handleTouchEnd('ArrowUp'));
+    
+    // Add touch events for down button
+    downButton.addEventListener('touchstart', handleTouchStart('ArrowDown'));
+    downButton.addEventListener('touchend', handleTouchEnd('ArrowDown'));
+    downButton.addEventListener('touchcancel', handleTouchEnd('ArrowDown'));
+    
+    // Add touch events for left button
+    leftButton.addEventListener('touchstart', handleTouchStart('ArrowLeft'));
+    leftButton.addEventListener('touchend', handleTouchEnd('ArrowLeft'));
+    leftButton.addEventListener('touchcancel', handleTouchEnd('ArrowLeft'));
+    
+    // Add touch events for right button
+    rightButton.addEventListener('touchstart', handleTouchStart('ArrowRight'));
+    rightButton.addEventListener('touchend', handleTouchEnd('ArrowRight'));
+    rightButton.addEventListener('touchcancel', handleTouchEnd('ArrowRight'));
+    
+    // Also add mouse events for testing on desktop
+    upButton.addEventListener('mousedown', handleTouchStart('ArrowUp'));
+    upButton.addEventListener('mouseup', handleTouchEnd('ArrowUp'));
+    upButton.addEventListener('mouseleave', handleTouchEnd('ArrowUp'));
+    
+    downButton.addEventListener('mousedown', handleTouchStart('ArrowDown'));
+    downButton.addEventListener('mouseup', handleTouchEnd('ArrowDown'));
+    downButton.addEventListener('mouseleave', handleTouchEnd('ArrowDown'));
+    
+    leftButton.addEventListener('mousedown', handleTouchStart('ArrowLeft'));
+    leftButton.addEventListener('mouseup', handleTouchEnd('ArrowLeft'));
+    leftButton.addEventListener('mouseleave', handleTouchEnd('ArrowLeft'));
+    
+    rightButton.addEventListener('mousedown', handleTouchStart('ArrowRight'));
+    rightButton.addEventListener('mouseup', handleTouchEnd('ArrowRight'));
+    rightButton.addEventListener('mouseleave', handleTouchEnd('ArrowRight'));
+    
+    // Prevent default behavior for all buttons to avoid unwanted scrolling
+    document.querySelectorAll('.control-button').forEach(button => {
+        button.addEventListener('touchstart', e => e.preventDefault());
+        button.addEventListener('touchmove', e => e.preventDefault());
+        button.addEventListener('touchend', e => e.preventDefault());
+    });
 }

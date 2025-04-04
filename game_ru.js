@@ -78,6 +78,9 @@ window.onload = function() {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     document.getElementById('restart-button').addEventListener('click', resetGame);
+    
+    // Инициализация мобильного управления
+    initMobileControls();
 };
 
 // Сброс состояния игры
@@ -307,4 +310,72 @@ function endGame() {
     finalScoreElement.textContent = 'Ваш счет: ' + Math.floor(score);
     highScoreElement.textContent = 'Рекорд: ' + Math.floor(highScore);
     gameOverElement.style.display = 'flex';
+}
+
+// Мобильное управление
+function initMobileControls() {
+    // Получение кнопок мобильного управления
+    const upButton = document.getElementById('up-button');
+    const downButton = document.getElementById('down-button');
+    const leftButton = document.getElementById('left-button');
+    const rightButton = document.getElementById('right-button');
+    
+    // Обработчики событий касания для мобильных кнопок
+    function handleTouchStart(direction) {
+        return function(e) {
+            e.preventDefault();
+            keys[direction] = true;
+        };
+    }
+    
+    function handleTouchEnd(direction) {
+        return function(e) {
+            e.preventDefault();
+            keys[direction] = false;
+        };
+    }
+    
+    // Добавление событий касания для кнопки вверх
+    upButton.addEventListener('touchstart', handleTouchStart('ArrowUp'));
+    upButton.addEventListener('touchend', handleTouchEnd('ArrowUp'));
+    upButton.addEventListener('touchcancel', handleTouchEnd('ArrowUp'));
+    
+    // Добавление событий касания для кнопки вниз
+    downButton.addEventListener('touchstart', handleTouchStart('ArrowDown'));
+    downButton.addEventListener('touchend', handleTouchEnd('ArrowDown'));
+    downButton.addEventListener('touchcancel', handleTouchEnd('ArrowDown'));
+    
+    // Добавление событий касания для кнопки влево
+    leftButton.addEventListener('touchstart', handleTouchStart('ArrowLeft'));
+    leftButton.addEventListener('touchend', handleTouchEnd('ArrowLeft'));
+    leftButton.addEventListener('touchcancel', handleTouchEnd('ArrowLeft'));
+    
+    // Добавление событий касания для кнопки вправо
+    rightButton.addEventListener('touchstart', handleTouchStart('ArrowRight'));
+    rightButton.addEventListener('touchend', handleTouchEnd('ArrowRight'));
+    rightButton.addEventListener('touchcancel', handleTouchEnd('ArrowRight'));
+    
+    // Также добавим события мыши для тестирования на десктопе
+    upButton.addEventListener('mousedown', handleTouchStart('ArrowUp'));
+    upButton.addEventListener('mouseup', handleTouchEnd('ArrowUp'));
+    upButton.addEventListener('mouseleave', handleTouchEnd('ArrowUp'));
+    
+    downButton.addEventListener('mousedown', handleTouchStart('ArrowDown'));
+    downButton.addEventListener('mouseup', handleTouchEnd('ArrowDown'));
+    downButton.addEventListener('mouseleave', handleTouchEnd('ArrowDown'));
+    
+    leftButton.addEventListener('mousedown', handleTouchStart('ArrowLeft'));
+    leftButton.addEventListener('mouseup', handleTouchEnd('ArrowLeft'));
+    leftButton.addEventListener('mouseleave', handleTouchEnd('ArrowLeft'));
+    
+    rightButton.addEventListener('mousedown', handleTouchStart('ArrowRight'));
+    rightButton.addEventListener('mouseup', handleTouchEnd('ArrowRight'));
+    rightButton.addEventListener('mouseleave', handleTouchEnd('ArrowRight'));
+    
+    // Предотвращение стандартного поведения для всех кнопок, чтобы избежать нежелательной прокрутки
+    document.querySelectorAll('.control-button').forEach(button => {
+        button.addEventListener('touchstart', e => e.preventDefault());
+        button.addEventListener('touchmove', e => e.preventDefault());
+        button.addEventListener('touchend', e => e.preventDefault());
+    });
 }
