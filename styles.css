@@ -105,7 +105,7 @@ body {
 /* Mobile controls */
 #mobile-controls {
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     display: none; /* Hidden by default, shown on mobile */
@@ -114,6 +114,9 @@ body {
     z-index: 20;
     width: 100%;
     max-width: 300px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 5px 0;
 }
 
 .control-row {
@@ -164,21 +167,26 @@ body {
         margin: 0;
         padding: 0;
         box-shadow: none;
+        display: flex;
+        flex-direction: column;
     }
     
     #game-canvas {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 120px); /* Оставляем место для кнопок внизу */
     }
     
     #mobile-controls {
         display: flex; /* Show mobile controls on smaller screens */
-        bottom: 30px;
+        position: absolute;
+        bottom: 10px;
+        height: 110px;
     }
     
     #ui-container {
         top: 50px; /* Move UI down to avoid overlap with title */
         font-size: 120%;
+        left: 20px; /* Увеличиваем отступ слева */
     }
     
     #game-title {
@@ -197,28 +205,37 @@ body {
 
 @media (max-width: 480px) {
     .control-button {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         font-size: 24px;
         margin: 0 5px;
     }
     
     #mobile-controls {
-        bottom: 20px;
+        bottom: 10px;
+    }
+    
+    #ui-container {
+        left: 15px;
     }
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
+    #game-canvas {
+        height: calc(100% - 80px); /* u041cu0435u043du044cu0448u0435 u043cu0435u0441u0442u0430 u0434u043bu044f u043au043du043eu043fu043eu043a u0432 u043bu0430u043du0434u0448u0430u0444u0442u043du043eu043c u0440u0435u0436u0438u043cu0435 */
+    }
+    
     #mobile-controls {
         flex-direction: row;
-        bottom: 10px;
+        bottom: 5px;
+        height: 70px;
     }
     
     .control-button {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        margin: 0 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+        margin: 0 8px;
     }
     
     #game-title {
@@ -227,6 +244,7 @@ body {
     
     #ui-container {
         top: 30px;
+        left: 15px;
     }
 }
 

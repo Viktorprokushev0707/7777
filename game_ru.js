@@ -59,10 +59,7 @@ window.onload = function() {
     highScoreElement = document.getElementById('high-score');
     
     // Установка размеров холста
-    gameWidth = 800;
-    gameHeight = 600;
-    canvas.width = gameWidth;
-    canvas.height = gameHeight;
+    resizeCanvas();
     
     // Загрузка ресурсов
     backgroundImage.src = 'fon.png';
@@ -78,6 +75,7 @@ window.onload = function() {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     document.getElementById('restart-button').addEventListener('click', resetGame);
+    window.addEventListener('resize', handleResize);
     
     // Инициализация мобильного управления
     initMobileControls();
@@ -85,13 +83,24 @@ window.onload = function() {
 
 // Сброс состояния игры
 function resetGame() {
+    // Получаем актуальные размеры игрового поля
+    gameWidth = canvas.width;
+    gameHeight = canvas.height;
+    
     // Инициализация позиции камеры (центр экрана)
     cameraX = (gameWidth - FRAME_WIDTH) / 2;
     cameraY = (gameHeight - FRAME_HEIGHT) / 2;
     
     // Инициализация позиции и размера спикера
-    speakerWidth = 100;
-    speakerHeight = 200;
+    // Уменьшаем размер спикера на мобильных устройствах
+    if (window.innerWidth <= 480) {
+        speakerWidth = 80;
+        speakerHeight = 160;
+    } else {
+        speakerWidth = 100;
+        speakerHeight = 200;
+    }
+    
     speakerX = (gameWidth - speakerWidth) / 2;
     speakerY = (gameHeight - speakerHeight) / 2;
     
@@ -378,4 +387,60 @@ function initMobileControls() {
         button.addEventListener('touchmove', e => e.preventDefault());
         button.addEventListener('touchend', e => e.preventDefault());
     });
+}
+
+// u041eu0431u0440u0430u0431u043eu0442u043au0430 u0438u0437u043cu0435u043du0435u043du0438u044f u0440u0430u0437u043cu0435u0440u0430 u043eu043au043du0430
+function handleResize() {
+    resizeCanvas();
+    // u041fu0435u0440u0435u0441u0447u0438u0442u044bu0432u0430u0435u043c u0440u0430u0437u043cu0435u0440 u0441u043fu0438u043au0435u0440u0430 u043fu0440u0438 u0438u0437u043cu0435u043du0435u043du0438u0438 u0440u0430u0437u043cu0435u0440u0430 u044du043au0440u0430u043du0430
+    if (window.innerWidth <= 480) {
+        speakerWidth = 80;
+        speakerHeight = 160;
+    } else {
+        speakerWidth = 100;
+        speakerHeight = 200;
+    }
+    
+    // u041fu0440u043eu0432u0435u0440u044fu0435u043c, u0447u0442u043eu0431u044b u0441u043fu0438u043au0435u0440 u043du0435 u0432u044bu0445u043eu0434u0438u043b u0437u0430 u043fu0440u0435u0434u0435u043bu044b u044du043au0440u0430u043du0430
+    if (speakerX + speakerWidth > gameWidth) {
+        speakerX = gameWidth - speakerWidth;
+    }
+    if (speakerY + speakerHeight > gameHeight) {
+        speakerY = gameHeight - speakerHeight;
+    }
+    
+    // u041fu0440u043eu0432u0435u0440u044fu0435u043c, u0447u0442u043eu0431u044b u043au0430u043cu0435u0440u0430 u043du0435 u0432u044bu0445u043eu0434u0438u043bu0430 u0437u0430 u043fu0440u0435u0434u0435u043bu044b u044du043au0440u0430u043du0430
+    if (cameraX + FRAME_WIDTH > gameWidth) {
+        cameraX = gameWidth - FRAME_WIDTH;
+    }
+    if (cameraY + FRAME_HEIGHT > gameHeight) {
+        cameraY = gameHeight - FRAME_HEIGHT;
+    }
+}
+
+// u0418u0437u043cu0435u043du0435u043du0438u0435 u0440u0430u0437u043cu0435u0440u0430 u0445u043eu043bu0441u0442u0430
+function resizeCanvas() {
+    // u041fu043eu043bu0443u0447u0430u0435u043c u0440u0430u0437u043cu0435u0440u044b u043au043eu043du0442u0435u0439u043du0435u0440u0430
+    const container = document.getElementById('game-container');
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    
+    // u0423u0447u0438u0442u044bu0432u0430u0435u043c u043cu0435u0441u0442u043e u0434u043bu044f u043au043du043eu043fu043eu043a u0443u043fu0440u0430u0432u043bu0435u043du0438u044f
+    let canvasHeight = containerHeight;
+    if (window.innerWidth <= 850) {
+        // u041du0430 u043cu043eu0431u0438u043bu044cu043du044bu0445 u0443u0441u0442u0440u043eu0439u0441u0442u0432u0430u0445 u043eu0441u0442u0430u0432u043bu044fu0435u043c u043cu0435u0441u0442u043e u0434u043bu044f u043au043du043eu043fu043eu043a
+        if (window.innerHeight <= 500) { // u041bu0430u043du0434u0448u0430u0444u0442u043du0430u044f u043eu0440u0438u0435u043du0442u0430u0446u0438u044f
+            canvasHeight = containerHeight - 80;
+        } else { // u041fu043eu0440u0442u0440u0435u0442u043du0430u044f u043eu0440u0438u0435u043du0442u0430u0446u0438u044f
+            canvasHeight = containerHeight - 120;
+        }
+    }
+    
+    // u0423u0441u0442u0430u043du0430u0432u043bu0438u0432u0430u0435u043c u0440u0430u0437u043cu0435u0440u044b u0445u043eu043bu0441u0442u0430
+    canvas.width = containerWidth;
+    canvas.height = canvasHeight;
+    
+    // u041eu0431u043du043eu0432u043bu044fu0435u043c u0433u043bu043eu0431u0430u043bu044cu043du044bu0435 u043fu0435u0440u0435u043cu0435u043du043du044bu0435
+    gameWidth = canvas.width;
+    gameHeight = canvas.height;
 }
